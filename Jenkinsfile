@@ -11,7 +11,7 @@ pipeline {
         dockerHome = tool 'myDocker'
         mavenHome = tool 'myMaven'
         PATH = "$dockerHome/bin:$mavenHome/bin:$PATH"
-        DOCKER_HOST = "tcp://172.21.58.55:2376"
+        // DOCKER_HOST = "tcp://172.21.58.55:2376"
     }
     
     stages {
@@ -57,6 +57,7 @@ pipeline {
             steps {
                 script {
                     // Corrected docker build syntax
+                    sh 'export DOCKER_HOST=tcp://172.21.58.55:2376'
                     dockerImage = docker.build("aosora13/currency-exchange-devops:$env.BUILD_TAG", ".")
                 }
             }
