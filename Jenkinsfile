@@ -1,17 +1,16 @@
 pipeline {
-    agent any
     // Uncomment the following block if you want to use a Docker agent
-    // agent {
-    //     docker {
-    //         image 'node:23.10.0-alpine'
-    //     }
-    // }
+    agent {
+        docker {
+            image 'docker:latest'
+        }
+    }
     
     environment {
         dockerHome = tool 'myDocker'
         mavenHome = tool 'myMaven'
         PATH = "$dockerHome/bin:$mavenHome/bin:$PATH"
-        // DOCKER_HOST = "tcp://172.21.58.55:2376"
+        DOCKER_HOST = "tcp://172.21.58.55:2376"
     }
     
     stages {
