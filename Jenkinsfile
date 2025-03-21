@@ -11,6 +11,7 @@ pipeline {
         dockerHome = tool 'myDocker'
         mavenHome = tool 'myMaven'
         PATH = "$dockerHome/bin:$mavenHome/bin:$PATH"
+        DOCKER_HOST = "tcp:// 172.21.58.55:2376"
     }
     
     stages {
