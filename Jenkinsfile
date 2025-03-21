@@ -1,15 +1,18 @@
 pipeline {
     agent any
+    // Uncomment the following block if you want to use a Docker agent
     // agent {
     //     docker {
     //         image 'node:23.10.0-alpine'
     //     }
     // }
+    
     environment {
         dockerHome = tool 'myDocker'
         mavenHome = tool 'myMaven'
         PATH = "$dockerHome/bin:$mavenHome/bin:$PATH"
     }
+    
     stages {
         stage('Checkout') {
             steps {
@@ -24,46 +27,53 @@ pipeline {
                 echo "BUILD_URL - $env.BUILD_URL"
             }
         }
+        
         stage('Compile') {
             steps {
                 sh "mvn clean compile"
             }
         }
+        
         stage('Test') {
             steps {
                 sh "mvn test"
             }
         }
+        
         stage('Integration Test') {
             steps {
                 sh "mvn failsafe:integration-test failsafe:verify"
             }
         }
-
+        
         stage('Package') {
             steps {
                 sh "mvn package -DskipTests"
             }
         }
+        
         stage('Build Docker Image') {
             steps {
-                // docker build -t aosora13/currency-exchange-devops:$env.BUILD_TAG .
                 script {
-                    docker.build("-t aosora13/currency-exchange-devops:$env.BUILD_TAG .")
+                    // Corrected docker build syntax
+                    dockerImage = docker.build("aosora13/currency-exchange-devops:$env.BUILD_TAG", ".")
                 }
             }
         }
+        
         stage('Push Docker Image') {
             steps {
-                docker.withRegistry('', 'dockerhub') {
-                    
-                
-                dockerImage.push();
-                dockerImage.push('latest');
-             }
+                script {
+                    // Corrected docker push syntax
+                    docker.withRegistry('https://registry.hub.docker.com', 'dockerhub') {
+                        dockerImage.push()
+                        dockerImage.push('latest')
+                    }
+                }
             }
         }
     }
+    
     post {
         always {
             echo "I am awesome. I run always"
