@@ -1,5 +1,7 @@
 pipeline {
-    agent any
+    agent {
+        label 'main-host'
+    }
     // agent {
     //     docker {
     //         image 'node:23.10.0-alpine'
